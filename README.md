@@ -62,7 +62,10 @@ The swagger spec can be found in
 ```
 http://localhost:8080/swagger-ui.html
 ```
-Alternatively, it is also available in the path (/products-v1/specs/products-v1.json)
+Alternatively, it is also available in the path 
+```
+/products-v1/specs/products-v1.json
+```
 
 ### Execution and validation
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.tgt.myretail.controller.ProductControllerUnitTest" time="3.124" tests="7" errors="0" skipped="0" failures="0">
+<testsuite name="com.tgt.myretail.controller.ProductControllerUnitTest" time="3.822" tests="7" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/jre/lib"/>
     <property name="java.vm.version" value="25.45-b02"/>
     <property name="gopherProxySet" value="false"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
-    <property name="maven.multiModuleProjectDirectory" value="/Users/Sashwat/interview/productDetails2"/>
+    <property name="maven.multiModuleProjectDirectory" value="/Users/Sashwat/interview/products-v1"/>
     <property name="java.vendor.url" value="http://java.oracle.com/"/>
     <property name="path.separator" value=":"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
@@ -16,7 +16,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value="unknown"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="/Users/Sashwat/interview/productDetails2"/>
+    <property name="user.dir" value="/Users/Sashwat/interview/products-v1"/>
     <property name="java.runtime.version" value="1.8.0_45-b14"/>
     <property name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment"/>
     <property name="java.endorsed.dirs" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/jre/lib/endorsed"/>
@@ -61,11 +61,11 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="testGetProductPricingDetailsNotFound" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="2.204"/>
-  <testcase name="testUpdatePricingDetailsNotFound" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.308"/>
-  <testcase name="testGetProductPricingDetailsInvalidKey" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.018"/>
-  <testcase name="testHandleInvalidURL" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.046"/>
-  <testcase name="testUpdatePricingDetailsInvalidKey" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.03"/>
-  <testcase name="testGetProductPricingDetails" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.443"/>
-  <testcase name="testUpdatePricingDetails" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.075"/>
+  <testcase name="testGetProductPricingDetailsNotFound" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="2.4"/>
+  <testcase name="testUpdatePricingDetailsNotFound" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.522"/>
+  <testcase name="testGetProductPricingDetailsInvalidKey" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.042"/>
+  <testcase name="testHandleInvalidURL" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.084"/>
+  <testcase name="testUpdatePricingDetailsInvalidKey" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.035"/>
+  <testcase name="testGetProductPricingDetails" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.59"/>
+  <testcase name="testUpdatePricingDetails" classname="com.tgt.myretail.controller.ProductControllerUnitTest" time="0.149"/>
 </testsuite>

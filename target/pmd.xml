@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="5.6.1" timestamp="2017-05-15T21:36:51.529">
+<file name="/Users/Sashwat/interview/products-v1/src/main/java/com/myretail/domain/PricingDTO.java">
+<violation beginline="24" endline="24" begincolumn="24" endcolumn="25" rule="UnusedPrivateField" ruleset="Unused Code" package="com.myretail.domain" class="PricingDTO" variable="id" externalInfoUrl="https://pmd.github.io/pmd-5.6.1/pmd-java/rules/java/unusedcode.html#UnusedPrivateField" priority="3">
+Avoid unused private fields such as 'id'.
+</violation>
+</file>
+</pmd>

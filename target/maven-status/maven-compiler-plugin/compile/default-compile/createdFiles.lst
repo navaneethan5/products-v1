@@ -1,9 +1,0 @@
-com/myretail/Application.class
-com/myretail/controller/ProductController.class
-com/myretail/util/Message.class
-com/myretail/domain/ProductDTO.class
-com/myretail/repository/ProductRepository.class
-com/myretail/service/ProductService.class
-com/myretail/util/Errors.class
-com/myretail/constants/ProductConstants.class
-com/myretail/domain/PricingDTO.class

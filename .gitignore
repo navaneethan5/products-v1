@@ -8,3 +8,4 @@ target/maven-status
 target/surefire-reports
 *.jar
 products-v1-0.0.1-SNAPSHOT.jar.original
+/target/

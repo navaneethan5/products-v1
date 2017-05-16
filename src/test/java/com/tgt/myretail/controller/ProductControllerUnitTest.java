@@ -84,7 +84,7 @@ public class ProductControllerUnitTest {
 
 	@Test
 	public void testGetProductPricingDetails() throws Exception {
-		mockMvc.perform(get("/products/13860428?key=1234").session(session).accept(MediaType.APPLICATION_JSON))
+		mockMvc.perform(get("/products/v113860428?key=1234").session(session).accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.id", is("13860428")))
 				.andExpect(jsonPath("$.name", is("The Big Lebowski (Blu-ray)")))
 				.andExpect(jsonPath("$.current_price.currency_code", is("USD")));
@@ -96,7 +96,7 @@ public class ProductControllerUnitTest {
 		String jsonPath = json(
 				new ProductDTO("The Big Lebowski (Blu-ray)", "13860428", new PricingDTO("13860428", 100.0, "USD")));
 		this.mockMvc
-				.perform(put("/products/13860428?key=1234").contentType(MediaType.APPLICATION_JSON).content(jsonPath))
+				.perform(put("/products/v113860428?key=1234").contentType(MediaType.APPLICATION_JSON).content(jsonPath))
 				.andExpect(status().isOk());
 
 	}
@@ -105,20 +105,20 @@ public class ProductControllerUnitTest {
 	public void testUpdatePricingDetailsNotFound() throws Exception {
 		String jsonPath = json(
 				new ProductDTO("The Big Lebowski (Blu-ray)", "13860428", new PricingDTO("138604", 100.0, "USD")));
-		this.mockMvc.perform(put("/products/138604?key=1234").contentType(MediaType.APPLICATION_JSON).content(jsonPath))
+		this.mockMvc.perform(put("/products/v1138604?key=1234").contentType(MediaType.APPLICATION_JSON).content(jsonPath))
 				.andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void testGetProductPricingDetailsNotFound() throws Exception {
-		mockMvc.perform(get("/products/1386042?key=1234").session(session).accept(MediaType.APPLICATION_JSON))
+		mockMvc.perform(get("/products/v11386042?key=1234").session(session).accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 
 	}
 
 	@Test
 	public void testGetProductPricingDetailsInvalidKey() throws Exception {
-		mockMvc.perform(get("/products/1386042?key=123").session(session).accept(MediaType.APPLICATION_JSON))
+		mockMvc.perform(get("/products/v11386042?key=123").session(session).accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isUnauthorized());
 
 	}
@@ -127,15 +127,8 @@ public class ProductControllerUnitTest {
 	public void testUpdatePricingDetailsInvalidKey() throws Exception {
 		String jsonPath = json(
 				new ProductDTO("The Big Lebowski (Blu-ray)", "13860428", new PricingDTO("138604", 100.0, "USD")));
-		this.mockMvc.perform(put("/products/138604?key=123").contentType(MediaType.APPLICATION_JSON).content(jsonPath))
+		this.mockMvc.perform(put("/products/v1138604?key=123").contentType(MediaType.APPLICATION_JSON).content(jsonPath))
 				.andExpect(status().isUnauthorized());
-	}
-
-	@Test
-	public void testHandleInvalidURL() throws Exception {
-		mockMvc.perform(get("/product?key=1234").session(session).accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
-
 	}
 
 	protected String json(Object o) throws IOException {

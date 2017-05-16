@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.tgt.myretail.controller.ProductControllerUnitTest
 -------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 48.573 sec - in com.tgt.myretail.controller.ProductControllerUnitTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.866 sec - in com.tgt.myretail.controller.ProductControllerUnitTest

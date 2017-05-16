@@ -22,7 +22,7 @@ import com.myretail.util.Errors;
 import com.myretail.util.Message;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/products/v1")
 public class ProductController {
 
 	@Autowired
@@ -79,12 +79,12 @@ public class ProductController {
 	 * @param productId
 	 * @param accept
 	 * @param contentType
-	 * @param productDetail
+	 * @param productDTO
 	 * @return
 	 */
 	@RequestMapping(value = "/{productId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updatePricingDetails(@PathVariable String productId,
-			@RequestBody ProductDTO productDetail, @RequestParam("key") String key) {
+			@RequestBody ProductDTO productDTO, @RequestParam("key") String key) {
 		
 		log.info("Calling REST method updatePricingDetails");
 		
@@ -97,7 +97,7 @@ public class ProductController {
 			return new ResponseEntity<Message>(message, HttpStatus.UNAUTHORIZED);
 		}
 
-		ProductDTO result = (ProductDTO) productService.updatePricingDetails(productDetail, productId);
+		ProductDTO result = (ProductDTO) productService.updatePricingDetails(productDTO, productId);
 
 		if (null == result) {
 			log.info("Pricing information is not found for the product id "+productId);
@@ -107,22 +107,6 @@ public class ProductController {
 		}
 
 		return new ResponseEntity<ProductDTO>(result, HttpStatus.OK);
-
-	}
-
-	/**
-	 * This method will act as a fall back method when incorrect URL is invoked
-	 * 
-	 * @return
-	 */
-	@RequestMapping("*")
-	public ResponseEntity<?> handleInvalidURL() {
-		log.error("URL entered is invalid");
-		Message message = new Message();
-		message.setMessage("Invalid URL/params");
-		message.setErrors(new Errors("url", "URL path should be in the form of /products/{id}"));
-
-		return new ResponseEntity<Message>(message, HttpStatus.BAD_REQUEST);
 
 	}
 

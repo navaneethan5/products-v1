@@ -1,3 +1,4 @@
+test-classes/*
 .settings/*
 .DS_Store
 target/generated-sources

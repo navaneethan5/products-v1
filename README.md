@@ -35,6 +35,7 @@ sudo mongod
 mongo
 ```
 4.Insert data for datasetup
+```
 db.createCollection("PRICING)
 db.PRICING.insert({ productId: '13860428', currentPrice : 19.99, currencyCode :'USD' })
 db.PRICING.insert({ productId: '16696652', currentPrice : 33.75, currencyCode :'USD' })

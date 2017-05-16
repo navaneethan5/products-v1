@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProductDTO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">products-v1</a> &gt; <a href="index.source.html" class="el_package">com.myretail.domain</a> &gt; <span class="el_source">ProductDTO.java</span></div><h1>ProductDTO.java</h1><pre class="source lang-java linenums">package com.myretail.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ProductDTO {
+
+	@JsonProperty(&quot;name&quot;)
+	public String productName;
+
+	@JsonProperty(&quot;id&quot;)
+	public String productId;
+
+	@JsonProperty(&quot;current_price&quot;)
+	public PricingDTO pricingDTO;
+
+<span class="fc" id="L18">	public ProductDTO() {</span>
+<span class="fc" id="L19">	}</span>
+
+<span class="fc" id="L21">	public ProductDTO(String title, String tcin, PricingDTO pricingDTO) {</span>
+<span class="fc" id="L22">		this.productName = title;</span>
+<span class="fc" id="L23">		this.productId = tcin;</span>
+<span class="fc" id="L24">		this.pricingDTO = pricingDTO;</span>
+<span class="fc" id="L25">	}</span>
+
+	public String getProductName() {
+<span class="fc" id="L28">		return productName;</span>
+	}
+
+	public void setProductName(String productName) {
+<span class="fc" id="L32">		this.productName = productName;</span>
+<span class="fc" id="L33">	}</span>
+
+	public String getProductId() {
+<span class="fc" id="L36">		return productId;</span>
+	}
+
+	public void setProductId(String productId) {
+<span class="fc" id="L40">		this.productId = productId;</span>
+<span class="fc" id="L41">	}</span>
+
+	public PricingDTO getPricingDTO() {
+<span class="fc" id="L44">		return pricingDTO;</span>
+	}
+
+	public void setPricingDTO(PricingDTO productDTO) {
+<span class="fc" id="L48">		this.pricingDTO = productDTO;</span>
+<span class="fc" id="L49">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

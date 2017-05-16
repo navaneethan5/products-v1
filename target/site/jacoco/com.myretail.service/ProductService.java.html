@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProductService.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">products-v1</a> &gt; <a href="index.source.html" class="el_package">com.myretail.service</a> &gt; <span class="el_source">ProductService.java</span></div><h1>ProductService.java</h1><pre class="source lang-java linenums">package com.myretail.service;
+
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myretail.constants.ProductConstants;
+import com.myretail.controller.ProductController;
+import com.myretail.domain.PricingDTO;
+import com.myretail.domain.ProductDTO;
+import com.myretail.repository.ProductRepository;
+import com.myretail.util.Errors;
+import com.myretail.util.Message;
+
+@Service
+public class ProductService {
+
+	ProductRepository productPricingRepository;
+
+<span class="fc" id="L28">	private static final Logger log = LoggerFactory.getLogger(ProductController.class);</span>
+
+	@Autowired
+<span class="fc" id="L31">	public ProductService(ProductRepository productPricingRepository) {</span>
+<span class="fc" id="L32">		this.productPricingRepository = productPricingRepository;</span>
+<span class="fc" id="L33">	}</span>
+
+	/**
+	 * Update pricing information for specific product id in database
+	 * 
+	 * @param productDTO
+	 * @param productId
+	 * @return
+	 */
+	public Object updatePricingDetails(ProductDTO productDTO, String productId) {
+
+<span class="fc" id="L44">		log.info(&quot;Calling Service method updatePricingDetails&quot;);</span>
+
+		try {
+
+<span class="fc" id="L48">			PricingDTO pricingDTO = productPricingRepository.findByProductId(productId);</span>
+<span class="fc" id="L49">			System.out.println(&quot;pricingDTO &quot;+pricingDTO);</span>
+
+<span class="fc bfc" id="L51" title="All 2 branches covered.">			if (null == pricingDTO) {</span>
+<span class="fc" id="L52">				return pricingDTO;</span>
+			}
+
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">			if (pricingDTO.getProductId() != null) {</span>
+				
+<span class="fc" id="L57">				pricingDTO.setCurrentPrice(productDTO.getPricingDTO().getCurrentPrice());</span>
+<span class="fc" id="L58">				pricingDTO.setCurrencyCode(productDTO.getPricingDTO().getCurrencyCode());</span>
+
+<span class="fc" id="L60">				productPricingRepository.save(pricingDTO);</span>
+			}
+
+<span class="fc" id="L63">			productDTO.setPricingDTO(pricingDTO);</span>
+
+<span class="fc" id="L65">			return productDTO;</span>
+
+<span class="nc" id="L67">		} catch (Exception e) {</span>
+<span class="nc" id="L68">			Message message = new Message();</span>
+<span class="nc" id="L69">			message.setErrors(new Errors(&quot;productId&quot;, e.getMessage()));</span>
+<span class="nc" id="L70">			message.setMessage(ProductConstants.DB_ERROR_CANNOT_RETRIEVE_PRICING);</span>
+<span class="nc" id="L71">			return message;</span>
+		}
+	}
+
+	/**
+	 * Get product name from external API and retrieve pricing information from
+	 * database for the give product id
+	 * 
+	 * @param productId
+	 * @return
+	 * @throws IOException
+	 * @throws JsonProcessingException
+	 */
+	public Object getProductDetails(String productId) throws JsonProcessingException, IOException {
+
+<span class="fc" id="L86">		log.info(&quot;Calling Service method getProductDetails&quot;);</span>
+<span class="fc" id="L87">		Object productDetails = getProductName(productId);</span>
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">		if (productDetails instanceof ProductDTO) {</span>
+<span class="fc" id="L90">			PricingDTO productPricing = productPricingRepository.findByProductId(productId);</span>
+<span class="fc" id="L91">			((ProductDTO) productDetails).setPricingDTO(productPricing);</span>
+		}
+
+<span class="fc" id="L94">		return productDetails;</span>
+
+	}
+
+	/**
+	 * Call external API to retrieve product name for the given productId
+	 * 
+	 * @param productId
+	 * @return
+	 * @throws IOException
+	 * @throws JsonProcessingException
+	 */
+	public Object getProductName(String productId) throws JsonProcessingException, IOException {
+<span class="fc" id="L107">		ResponseEntity&lt;String&gt; response = null;</span>
+<span class="fc" id="L108">		log.info(&quot;Calling Service method getProductName&quot;);</span>
+		try {
+
+<span class="fc" id="L111">			ProductDTO productDetails = new ProductDTO();</span>
+<span class="fc" id="L112">			RestTemplate restTemplate = new RestTemplate();</span>
+<span class="fc" id="L113">			response = restTemplate.getForEntity(constructURL(productId), String.class);</span>
+
+<span class="fc" id="L115">			ObjectMapper mapper = new ObjectMapper();</span>
+<span class="fc" id="L116">			JsonNode root = mapper.readTree(response.getBody());</span>
+<span class="fc" id="L117">			JsonNode tcin = root.path(&quot;product&quot;).path(&quot;item&quot;).path(&quot;tcin&quot;);</span>
+<span class="fc" id="L118">			JsonNode title = root.path(&quot;product&quot;).path(&quot;item&quot;).path(&quot;product_description&quot;).path(&quot;title&quot;);</span>
+<span class="fc" id="L119">			productDetails.setProductId(tcin.asText());</span>
+<span class="fc" id="L120">			productDetails.setProductName(title.asText());</span>
+<span class="fc" id="L121">			return productDetails;</span>
+		}
+
+<span class="fc" id="L124">		catch (Exception e) {</span>
+<span class="fc" id="L125">			log.error(&quot;Exception occured: &quot; + e.getMessage());</span>
+<span class="fc" id="L126">			return response;</span>
+		}
+
+	}
+
+	/**
+	 * Return target URL
+	 * 
+	 * @param productId
+	 * @return
+	 */
+	private String constructURL(String productId) {
+<span class="fc" id="L138">		return ProductConstants.REDSKY_ENDPOINT + &quot;/&quot; + productId;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

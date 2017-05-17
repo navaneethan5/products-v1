@@ -1,13 +1,18 @@
 package com.myretail.service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,8 +22,6 @@ import com.myretail.controller.ProductController;
 import com.myretail.domain.PricingDTO;
 import com.myretail.domain.ProductDTO;
 import com.myretail.repository.ProductRepository;
-import com.myretail.util.Errors;
-import com.myretail.util.Message;
 
 @Service
 public class ProductService {
@@ -43,33 +46,19 @@ public class ProductService {
 
 		log.info("Calling Service method updatePricingDetails");
 
-		try {
+		PricingDTO pricingDTO = productPricingRepository.findByProductId(productId);
 
-			PricingDTO pricingDTO = productPricingRepository.findByProductId(productId);
-			System.out.println("pricingDTO "+pricingDTO);
+		if (null != pricingDTO.getProductId()) {
 
-			if (null == pricingDTO) {
-				return pricingDTO;
-			}
+			pricingDTO.setCurrentPrice(productDTO.getPricingDTO().getCurrentPrice());
+			pricingDTO.setCurrencyCode(productDTO.getPricingDTO().getCurrencyCode());
 
-			if (pricingDTO.getProductId() != null) {
-				
-				pricingDTO.setCurrentPrice(productDTO.getPricingDTO().getCurrentPrice());
-				pricingDTO.setCurrencyCode(productDTO.getPricingDTO().getCurrencyCode());
-
-				productPricingRepository.save(pricingDTO);
-			}
-
-			productDTO.setPricingDTO(pricingDTO);
-
-			return productDTO;
-
-		} catch (Exception e) {
-			Message message = new Message();
-			message.setErrors(new Errors("productId", e.getMessage()));
-			message.setMessage(ProductConstants.DB_ERROR_CANNOT_RETRIEVE_PRICING);
-			return message;
+			productPricingRepository.save(pricingDTO);
 		}
+
+		productDTO.setPricingDTO(pricingDTO);
+
+		return productDTO;
 	}
 
 	/**
@@ -86,7 +75,7 @@ public class ProductService {
 		log.info("Calling Service method getProductDetails");
 		Object productDetails = getProductName(productId);
 
-		if (productDetails instanceof ProductDTO) {
+		if (productDetails instanceof ProductDTO && (null != ((ProductDTO) productDetails).getProductName())) {
 			PricingDTO productPricing = productPricingRepository.findByProductId(productId);
 			((ProductDTO) productDetails).setPricingDTO(productPricing);
 		}
@@ -104,26 +93,44 @@ public class ProductService {
 	 * @throws JsonProcessingException
 	 */
 	public Object getProductName(String productId) throws JsonProcessingException, IOException {
-		ResponseEntity<String> response = null;
+
 		log.info("Calling Service method getProductName");
+
+		ProductDTO productDetails = new ProductDTO();
+		HttpURLConnection conn = null;
+
 		try {
 
-			ProductDTO productDetails = new ProductDTO();
-			RestTemplate restTemplate = new RestTemplate();
-			response = restTemplate.getForEntity(constructURL(productId), String.class);
+			URL url = new URL(constructURL(productId));
+			conn = (HttpURLConnection)url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("Accept", "application/json");
 
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode root = mapper.readTree(response.getBody());
-			JsonNode tcin = root.path("product").path("item").path("tcin");
-			JsonNode title = root.path("product").path("item").path("product_description").path("title");
-			productDetails.setProductId(tcin.asText());
-			productDetails.setProductName(title.asText());
+			// RestTemplate restTemplate = new RestTemplate();
+			// response = restTemplate.getForEntity(constructURL(productId),
+			// String.class);
+
+			if (conn.getResponseCode() == 200) {
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode root = mapper.readTree(conn.getInputStream());
+				JsonNode tcin = root.path("product").path("item").path("tcin");
+				JsonNode title = root.path("product").path("item").path("product_description").path("title");
+				productDetails.setProductId(tcin.asText());
+				productDetails.setProductName(title.asText());
+			}
+
+			return productDetails;
+		} catch (JsonProcessingException e) {
+			log.error("JsonProcessingException occured when processing the response " + e.getMessage());
 			return productDetails;
 		}
 
-		catch (Exception e) {
-			log.error("Exception occured: " + e.getMessage());
-			return response;
+		catch (IOException e) {
+			log.error("IOException occured when invoking the api " + e.getMessage());
+			return productDetails;
+		}
+		finally{
+			conn.disconnect();
 		}
 
 	}
@@ -134,7 +141,7 @@ public class ProductService {
 	 * @param productId
 	 * @return
 	 */
-	private String constructURL(String productId) {
+	public String constructURL(String productId) {
 		return ProductConstants.REDSKY_ENDPOINT + "/" + productId;
 	}
 }

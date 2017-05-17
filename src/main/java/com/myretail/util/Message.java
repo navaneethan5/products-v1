@@ -8,19 +8,24 @@ public class Message {
 
 	@JsonProperty
 	private String message;
-	private Errors errors;
+
+	@JsonProperty
+	private String error;
+
 	public String getMessage() {
 		return message;
 	}
+
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public Errors getErrors() {
-		return errors;
+
+	public String getError() {
+		return error;
 	}
-	public void setErrors(Errors errors) {
-		this.errors = errors;
+
+	public void setError(String error) {
+		this.error = error;
 	}
-	
-	
+
 }

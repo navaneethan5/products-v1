@@ -2,29 +2,18 @@ package com.myretail.domain;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
+
 @Document(collection = "PRICING")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PricingDTO {
 
-
-
-	
-	@Override
-	public String toString() {
-		return "PricingDTO [ productId=" + productId + ", currentPrice=" + currentPrice
-				+ ", currencyCode=" + currencyCode + "]";
-	}
-
-
 	@Id
 	private String id;
-	
-	
-
 
 	@JsonIgnore
 	private String productId;

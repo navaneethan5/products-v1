@@ -2,29 +2,18 @@
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
-@Document(collection = &quot;ProductPricing&quot;)
+
+@Document(collection = &quot;PRICING&quot;)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PricingDTO {
 
-
-
-	
-	@Override
-	public String toString() {
-<span class="fc" id="L18">		return &quot;PricingDTO [ productId=&quot; + productId + &quot;, currentPrice=&quot; + currentPrice</span>
-				+ &quot;, currencyCode=&quot; + currencyCode + &quot;]&quot;;
-	}
-
-
 	@Id
 	private String id;
-	
-	
-
 
 	@JsonIgnore
 	private String productId;
@@ -35,38 +24,38 @@ public class PricingDTO {
 	@JsonProperty(&quot;currency_code&quot;)
 	private String currencyCode;
 
-<span class="fc" id="L38">	public PricingDTO() {</span>
-<span class="fc" id="L39">	}</span>
+<span class="fc" id="L27">	public PricingDTO() {</span>
+<span class="fc" id="L28">	}</span>
 
-<span class="fc" id="L41">	public PricingDTO(String productId, double currentPrice, String currencyCode) {</span>
-<span class="fc" id="L42">		this.productId = productId;</span>
-<span class="fc" id="L43">		this.currentPrice = currentPrice;</span>
-<span class="fc" id="L44">		this.currencyCode = currencyCode;</span>
-<span class="fc" id="L45">	}</span>
+<span class="fc" id="L30">	public PricingDTO(String productId, double currentPrice, String currencyCode) {</span>
+<span class="fc" id="L31">		this.productId = productId;</span>
+<span class="fc" id="L32">		this.currentPrice = currentPrice;</span>
+<span class="fc" id="L33">		this.currencyCode = currencyCode;</span>
+<span class="fc" id="L34">	}</span>
 
 	public String getProductId() {
-<span class="fc" id="L48">		return productId;</span>
+<span class="fc" id="L37">		return productId;</span>
 	}
 
 	public void setProductId(String productId) {
-<span class="fc" id="L52">		this.productId = productId;</span>
-<span class="fc" id="L53">	}</span>
+<span class="fc" id="L41">		this.productId = productId;</span>
+<span class="fc" id="L42">	}</span>
 
 	public double getCurrentPrice() {
-<span class="fc" id="L56">		return currentPrice;</span>
+<span class="fc" id="L45">		return currentPrice;</span>
 	}
 
 	public void setCurrentPrice(double currentPrice) {
-<span class="fc" id="L60">		this.currentPrice = currentPrice;</span>
-<span class="fc" id="L61">	}</span>
+<span class="fc" id="L49">		this.currentPrice = currentPrice;</span>
+<span class="fc" id="L50">	}</span>
 
 	public String getCurrencyCode() {
-<span class="fc" id="L64">		return currencyCode;</span>
+<span class="fc" id="L53">		return currencyCode;</span>
 	}
 
 	public void setCurrencyCode(String currencyName) {
-<span class="fc" id="L68">		this.currencyCode = currencyName;</span>
-<span class="fc" id="L69">	}</span>
+<span class="fc" id="L57">		this.currencyCode = currencyName;</span>
+<span class="fc" id="L58">	}</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

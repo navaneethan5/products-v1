@@ -8,20 +8,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 	@JsonProperty
 	private String message;
-	private Errors errors;
+
+	@JsonProperty
+	private String error;
+
 	public String getMessage() {
-<span class="fc" id="L13">		return message;</span>
+<span class="fc" id="L16">		return message;</span>
 	}
+
 	public void setMessage(String message) {
-<span class="fc" id="L16">		this.message = message;</span>
-<span class="fc" id="L17">	}</span>
-	public Errors getErrors() {
-<span class="fc" id="L19">		return errors;</span>
+<span class="fc" id="L20">		this.message = message;</span>
+<span class="fc" id="L21">	}</span>
+
+	public String getError() {
+<span class="fc" id="L24">		return error;</span>
 	}
-	public void setErrors(Errors errors) {
-<span class="fc" id="L22">		this.errors = errors;</span>
-<span class="fc" id="L23">	}</span>
-	
-	
+
+	public void setError(String error) {
+<span class="fc" id="L28">		this.error = error;</span>
+<span class="fc" id="L29">	}</span>
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

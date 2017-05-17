@@ -15,18 +15,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.myretail.constants.ProductConstants;
 import com.myretail.domain.ProductDTO;
 import com.myretail.service.ProductService;
-import com.myretail.util.Errors;
 import com.myretail.util.Message;
 
 @RestController
 @RequestMapping("/products/v1")
 public class ProductController {
 
-	@Autowired
 	ProductService productService;
+
+	@Autowired
+	public ProductController(ProductService productService) {
+		this.productService = productService;
+	}
 
 	private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
@@ -39,7 +43,8 @@ public class ProductController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{productId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getProductPricingDetails(@PathVariable String productId, @RequestParam("key") String key) {
+	public ResponseEntity<?> getProductPricingDetails(@PathVariable String productId, @RequestParam("key") String key)
+			throws JsonProcessingException, IOException {
 
 		log.info("Calling REST method getProductPricingDetails");
 
@@ -48,27 +53,24 @@ public class ProductController {
 
 		if (!key.equals(ProductConstants.CONSUMER_KEY)) {
 			log.info("Invalid consumer key");
-			message.setMessage("Unauthorized");
-			message.setErrors(new Errors("key", "Invalid Key"));
+			message.setError("Unauthorized");
+			message.setMessage("Invalid Key");
 			return new ResponseEntity<Message>(message, HttpStatus.UNAUTHORIZED);
-
 		}
 
-		try {
-			productPricingInfo = (ProductDTO) productService.getProductDetails(productId);
-			if (null == productPricingInfo) {
-				log.info("Product pricing details not found for the product id "+productId);
-				message.setMessage("Pricing details not found");
-				message.setErrors(new Errors("productId", "Pricing details not found for the given product id"));
-				return new ResponseEntity<Message>(message, HttpStatus.NOT_FOUND);
-			}
-		} catch (IOException e) {
-			log.error("IO Exception occured "+e.getMessage());
-			Message nessage = new Message();
-			nessage.setMessage("IO Exception occured");
-			nessage.setErrors(new Errors("productId", e.getMessage()));
-			return new ResponseEntity<Message>(nessage, HttpStatus.NOT_FOUND);
+		productPricingInfo = (ProductDTO) productService.getProductDetails(productId);
+		if (null == productPricingInfo.getProductName()) {
+			log.info("Product name could not be found for the product id " + productId);
+			message.setError("Product name not found");
+			message.setMessage("Product name could not be found for the given product id");
+			return new ResponseEntity<Message>(message, HttpStatus.NOT_FOUND);
+		} else if (null == productPricingInfo.getPricingDTO()) {
+			log.info("Pricing details could not be found for the product id " + productId);
+			message.setError("Pricing details not found");
+			message.setMessage("Pricing details could not be found for the given product id");
+			return new ResponseEntity<Message>(message, HttpStatus.NOT_FOUND);
 		}
+
 		return new ResponseEntity<ProductDTO>(productPricingInfo, HttpStatus.OK);
 	}
 
@@ -77,32 +79,30 @@ public class ProductController {
 	 * request required HTTP request to have Content-Type as application/json
 	 * 
 	 * @param productId
-	 * @param accept
-	 * @param contentType
 	 * @param productDTO
 	 * @return
 	 */
 	@RequestMapping(value = "/{productId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> updatePricingDetails(@PathVariable String productId,
-			@RequestBody ProductDTO productDTO, @RequestParam("key") String key) {
-		
+	public ResponseEntity<?> updatePricingDetails(@PathVariable String productId, @RequestBody ProductDTO productDTO,
+			@RequestParam("key") String key) {
+
 		log.info("Calling REST method updatePricingDetails");
-		
+
 		Message message = new Message();
 		if (!key.equals(ProductConstants.CONSUMER_KEY)) {
-			
+
 			log.info("Invalid consumer key");
-			message.setMessage("Unauthorized");
-			message.setErrors(new Errors("key", "Invalid Key"));
+			message.setError("Unauthorized");
+			message.setMessage("Invalid Key");
 			return new ResponseEntity<Message>(message, HttpStatus.UNAUTHORIZED);
 		}
 
 		ProductDTO result = (ProductDTO) productService.updatePricingDetails(productDTO, productId);
 
-		if (null == result) {
-			log.info("Pricing information is not found for the product id "+productId);
-			message.setMessage("Pricing details not found");
-			message.setErrors(new Errors("productId", "Pricing details not found for the given product id"));
+		if (null == result.getPricingDTO()) {
+			log.info("Pricing details could not be found for the product id " + productId);
+			message.setError("Pricing details not found");
+			message.setMessage("Pricing details could not be found for the given product id");
 			return new ResponseEntity<Message>(message, HttpStatus.NOT_FOUND);
 		}
 

@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductDTO {
 
-	@JsonProperty("name")
-	public String productName;
-
 	@JsonProperty("id")
 	public String productId;
+	
+	@JsonProperty("name")
+	public String productName;
 
 	@JsonProperty("current_price")
 	public PricingDTO pricingDTO;

@@ -1,151 +1,154 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "Api Documentation",
-    "version": "1.0",
-    "title": "Api Documentation",
-    "termsOfService": "urn:tos",
-    "contact": {
-      
-    },
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0"
-    }
-  },
-  "host": "localhost:8080",
-  "basePath": "/",
-  "tags": [
-    {
-      "name": "product-controller",
-      "description": "Product Controller"
-    }
-  ],
-  "paths": {
-    "/products/v1/{productId}": {
-      "get": {
-        "tags": [
-          "product-controller"
-        ],
-        "summary": "getProductPricingDetails",
-        "operationId": "getProductPricingDetailsUsingGET",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "productId",
-            "in": "path",
-            "description": "Product Id",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "key",
-            "in": "query",
-            "description": "Consumer key",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object"
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "product-controller"
-        ],
-        "summary": "updatePricingDetails",
-        "operationId": "updatePricingDetailsUsingPUT",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "productId",
-            "in": "path",
-            "description": "Product id",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "productPricingDTO",
-            "description": "Product name and pricing details for a given product id",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProductDTO"
-            }
-          },
-          {
-            "name": "key",
-            "in": "query",
-            "description": "Consumer key",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object"
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    }
-  },
-  "definitions": {
-    "PricingDTO": {
-      "type": "object",
-      "properties": {
-        "currency_code": {
-          "type": "string"
-        },
-        "value": {
-          "type": "number",
-          "format": "double"
-        }
-      }
-    },
-    "ProductDTO": {
-      "type": "object",
-      "properties": {
-        "current_price": {
-          "$ref": "#/definitions/PricingDTO"
-        },
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    }
-  }
+	"swagger": "2.0",
+	"info": {
+		"description": "Api Documentation",
+		"version": "1.0",
+		"title": "Api Documentation",
+		"termsOfService": "urn:tos",
+		"contact": {
+			
+		},
+		"license": {
+			"name": "Apache 2.0",
+			"url": "http://www.apache.org/licenses/LICENSE-2.0"
+		}
+	},
+	"host": "localhost:8080",
+	"basePath": "/",
+	"tags": [
+		{
+			"name": "products-v1",
+			"description": "This api fetches the product/pricing details and updates pricing information"
+		}
+	],
+	"paths": {
+		"/products/v1/{productId}": {
+			"get": {
+				"tags": [
+					"product-controller"
+				],
+				"summary": "getProductPricingDetails",
+				"operationId": "getProductPricingDetailsUsingGET",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"name": "productId",
+						"in": "path",
+						"description": "Product Id",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "key",
+						"in": "query",
+						"description": "Consumer key",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Not Found"
+					},
+					"500": {
+						"description": "Internal service error"
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"products-v1"
+				],
+				"summary": "updatePricingDetails",
+				"operationId": "updatePricingDetailsUsingPUT",
+				"consumes": [
+					"application/json"
+				],
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"name": "productId",
+						"in": "path",
+						"description": "Product id",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "productPricingDTO",
+						"description": "Product name and pricing details for a given product id",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ProductDTO"
+						}
+					},
+					{
+						"name": "key",
+						"in": "query",
+						"description": "Consumer key",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Not Found"
+					},
+					"500": {
+						"description": "Internal service error"
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"PricingDTO": {
+			"type": "object",
+			"properties": {
+				"currency_code": {
+					"type": "string"
+				},
+				"value": {
+					"type": "number",
+					"format": "double"
+				}
+			}
+		},
+		"ProductDTO": {
+			"type": "object",
+			"properties": {
+				"current_price": {
+					"$ref": "#/definitions/PricingDTO"
+				},
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				}
+			}
+		}
+	}
 }

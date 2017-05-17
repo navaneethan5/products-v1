@@ -8,7 +8,7 @@ public class Message {
 
 	@JsonProperty
 	private String message;
-
+	
 	@JsonProperty
 	private String error;
 

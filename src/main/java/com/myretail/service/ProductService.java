@@ -1,14 +1,9 @@
 package com.myretail.service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +32,7 @@ public class ProductService {
 
 	/**
 	 * Update pricing information for specific product id in database
-	 * 
+	 *
 	 * @param productDTO
 	 * @param productId
 	 * @return
@@ -48,7 +43,7 @@ public class ProductService {
 
 		PricingDTO pricingDTO = productPricingRepository.findByProductId(productId);
 
-		if (null != pricingDTO.getProductId()) {
+		if (null != pricingDTO && null != pricingDTO.getProductId()) {
 
 			pricingDTO.setCurrentPrice(productDTO.getPricingDTO().getCurrentPrice());
 			pricingDTO.setCurrencyCode(productDTO.getPricingDTO().getCurrencyCode());
@@ -64,7 +59,7 @@ public class ProductService {
 	/**
 	 * Get product name from external API and retrieve pricing information from
 	 * database for the give product id
-	 * 
+	 *
 	 * @param productId
 	 * @return
 	 * @throws IOException
@@ -86,7 +81,7 @@ public class ProductService {
 
 	/**
 	 * Call external API to retrieve product name for the given productId
-	 * 
+	 *
 	 * @param productId
 	 * @return
 	 * @throws IOException
@@ -102,7 +97,7 @@ public class ProductService {
 		try {
 
 			URL url = new URL(constructURL(productId));
-			conn = (HttpURLConnection)url.openConnection();
+			conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Accept", "application/json");
 
@@ -113,23 +108,25 @@ public class ProductService {
 			if (conn.getResponseCode() == 200) {
 				ObjectMapper mapper = new ObjectMapper();
 				JsonNode root = mapper.readTree(conn.getInputStream());
-				JsonNode tcin = root.path("product").path("item").path("tcin");
+				JsonNode tcin = root.path("product").path("available_to_promise_network").path("product_id");
 				JsonNode title = root.path("product").path("item").path("product_description").path("title");
 				productDetails.setProductId(tcin.asText());
 				productDetails.setProductName(title.asText());
+			} else if (conn.getResponseCode() == 500 || conn.getResponseCode() == 503) {
+				productDetails = null;
 			}
-
 			return productDetails;
 		} catch (JsonProcessingException e) {
 			log.error("JsonProcessingException occured when processing the response " + e.getMessage());
+			productDetails = null;
 			return productDetails;
 		}
 
 		catch (IOException e) {
 			log.error("IOException occured when invoking the api " + e.getMessage());
+			productDetails = null;
 			return productDetails;
-		}
-		finally{
+		} finally {
 			conn.disconnect();
 		}
 
@@ -137,7 +134,7 @@ public class ProductService {
 
 	/**
 	 * Return target URL
-	 * 
+	 *
 	 * @param productId
 	 * @return
 	 */

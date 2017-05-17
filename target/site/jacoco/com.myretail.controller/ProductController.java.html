@@ -2,12 +2,15 @@
 
 import java.io.IOException;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.myretail.constants.ProductConstants;
+import com.myretail.domain.PricingDTO;
 import com.myretail.domain.ProductDTO;
 import com.myretail.service.ProductService;
 import com.myretail.util.Message;
@@ -28,11 +32,11 @@ public class ProductController {
 	ProductService productService;
 
 	@Autowired
-<span class="fc" id="L31">	public ProductController(ProductService productService) {</span>
-<span class="fc" id="L32">		this.productService = productService;</span>
-<span class="fc" id="L33">	}</span>
+<span class="fc" id="L35">	public ProductController(ProductService productService) {</span>
+<span class="fc" id="L36">		this.productService = productService;</span>
+<span class="fc" id="L37">	}</span>
 
-<span class="fc" id="L35">	private static final Logger log = LoggerFactory.getLogger(ProductController.class);</span>
+<span class="fc" id="L39">	private static final Logger log = LoggerFactory.getLogger(ProductController.class);</span>
 
 	/**
 	 * Request to get product summary along with the pricing.This will call
@@ -46,32 +50,36 @@ public class ProductController {
 	public ResponseEntity&lt;?&gt; getProductPricingDetails(@PathVariable String productId, @RequestParam(&quot;key&quot;) String key)
 			throws JsonProcessingException, IOException {
 
-<span class="fc" id="L49">		log.info(&quot;Calling REST method getProductPricingDetails&quot;);</span>
+<span class="fc" id="L53">		log.info(&quot;Calling REST method getProductPricingDetails&quot;);</span>
 
-<span class="fc" id="L51">		ProductDTO productPricingInfo = null;</span>
-<span class="fc" id="L52">		Message message = new Message();</span>
+<span class="fc" id="L55">		ProductDTO productPricingInfo = null;</span>
+<span class="fc" id="L56">		Message message = new Message();</span>
 
-<span class="fc bfc" id="L54" title="All 2 branches covered.">		if (!key.equals(ProductConstants.CONSUMER_KEY)) {</span>
-<span class="fc" id="L55">			log.info(&quot;Invalid consumer key&quot;);</span>
-<span class="fc" id="L56">			message.setError(&quot;Unauthorized&quot;);</span>
-<span class="fc" id="L57">			message.setMessage(&quot;Invalid Key&quot;);</span>
-<span class="fc" id="L58">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.UNAUTHORIZED);</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		if (!key.equals(ProductConstants.CONSUMER_KEY)) {</span>
+<span class="fc" id="L59">			log.info(&quot;Invalid consumer key&quot;);</span>
+<span class="fc" id="L60">			message.setError(&quot;Unauthorized&quot;);</span>
+<span class="fc" id="L61">			message.setMessage(&quot;Invalid Key&quot;);</span>
+<span class="fc" id="L62">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.UNAUTHORIZED);</span>
 		}
 
-<span class="fc" id="L61">		productPricingInfo = (ProductDTO) productService.getProductDetails(productId);</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">		if (null == productPricingInfo.getProductName()) {</span>
-<span class="fc" id="L63">			log.info(&quot;Product name could not be found for the product id &quot; + productId);</span>
-<span class="fc" id="L64">			message.setError(&quot;Product name not found&quot;);</span>
-<span class="fc" id="L65">			message.setMessage(&quot;Product name could not be found for the given product id&quot;);</span>
-<span class="fc" id="L66">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.NOT_FOUND);</span>
-<span class="fc bfc" id="L67" title="All 2 branches covered.">		} else if (null == productPricingInfo.getPricingDTO()) {</span>
-<span class="fc" id="L68">			log.info(&quot;Pricing details could not be found for the product id &quot; + productId);</span>
-<span class="fc" id="L69">			message.setError(&quot;Pricing details not found&quot;);</span>
-<span class="fc" id="L70">			message.setMessage(&quot;Pricing details could not be found for the given product id&quot;);</span>
-<span class="fc" id="L71">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L65">		productPricingInfo = (ProductDTO) productService.getProductDetails(productId);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		if (null == productPricingInfo) {</span>
+<span class="fc" id="L67">			log.info(&quot;Error occured while retriving product name&quot; + productId);</span>
+<span class="fc" id="L68">			message.setError(&quot;Product details could not be retrived&quot;);</span>
+<span class="fc" id="L69">			message.setMessage(&quot;Error occured while retriving product name&quot;);</span>
+<span class="fc" id="L70">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.NOT_FOUND);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">		} else if (null == productPricingInfo.getProductName()) {</span>
+<span class="fc" id="L72">			log.info(&quot;Product name could not be found for the product id &quot; + productId);</span>
+<span class="fc" id="L73">			productPricingInfo = new ProductDTO(&quot;&quot;, productId, new PricingDTO(productId, 0, &quot;&quot;));</span>
+<span class="fc" id="L74">			return new ResponseEntity&lt;ProductDTO&gt;(productPricingInfo, HttpStatus.NOT_FOUND);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">		} else if (null == productPricingInfo.getPricingDTO()) {</span>
+<span class="fc" id="L76">			log.info(&quot;Pricing details could not be found for the product id &quot; + productId);</span>
+<span class="fc" id="L77">			ProductDTO prodDTO = new ProductDTO(productPricingInfo.getProductName(), productPricingInfo.getProductId(),</span>
+<span class="fc" id="L78">					new PricingDTO(productPricingInfo.getProductId(), 0, &quot;&quot;));</span>
+<span class="fc" id="L79">			return new ResponseEntity&lt;ProductDTO&gt;(prodDTO, HttpStatus.NOT_FOUND);</span>
 		}
 
-<span class="fc" id="L74">		return new ResponseEntity&lt;ProductDTO&gt;(productPricingInfo, HttpStatus.OK);</span>
+<span class="fc" id="L82">		return new ResponseEntity&lt;ProductDTO&gt;(productPricingInfo, HttpStatus.OK);</span>
 	}
 
 	/**
@@ -83,30 +91,60 @@ public class ProductController {
 	 * @return
 	 */
 	@RequestMapping(value = &quot;/{productId}&quot;, method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity&lt;?&gt; updatePricingDetails(@PathVariable String productId, @RequestBody ProductDTO productDTO,
-			@RequestParam(&quot;key&quot;) String key) {
+	public ResponseEntity&lt;?&gt; updatePricingDetails(@PathVariable String productId,
+			@Valid @RequestBody ProductDTO productDTO, @RequestParam(&quot;key&quot;) String key) {
 
-<span class="fc" id="L89">		log.info(&quot;Calling REST method updatePricingDetails&quot;);</span>
+<span class="fc" id="L97">		log.info(&quot;Calling REST method updatePricingDetails&quot;);</span>
 
-<span class="fc" id="L91">		Message message = new Message();</span>
-<span class="fc bfc" id="L92" title="All 2 branches covered.">		if (!key.equals(ProductConstants.CONSUMER_KEY)) {</span>
+<span class="fc" id="L99">		Message message = new Message();</span>
 
-<span class="fc" id="L94">			log.info(&quot;Invalid consumer key&quot;);</span>
-<span class="fc" id="L95">			message.setError(&quot;Unauthorized&quot;);</span>
-<span class="fc" id="L96">			message.setMessage(&quot;Invalid Key&quot;);</span>
-<span class="fc" id="L97">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.UNAUTHORIZED);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		if (!key.equals(ProductConstants.CONSUMER_KEY)) {</span>
+
+<span class="fc" id="L103">			log.info(&quot;Invalid consumer key&quot;);</span>
+<span class="fc" id="L104">			message.setError(&quot;Unauthorized&quot;);</span>
+<span class="fc" id="L105">			message.setMessage(&quot;Invalid Key&quot;);</span>
+<span class="fc" id="L106">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.UNAUTHORIZED);</span>
 		}
 
-<span class="fc" id="L100">		ProductDTO result = (ProductDTO) productService.updatePricingDetails(productDTO, productId);</span>
-
-<span class="fc bfc" id="L102" title="All 2 branches covered.">		if (null == result.getPricingDTO()) {</span>
-<span class="fc" id="L103">			log.info(&quot;Pricing details could not be found for the product id &quot; + productId);</span>
-<span class="fc" id="L104">			message.setError(&quot;Pricing details not found&quot;);</span>
-<span class="fc" id="L105">			message.setMessage(&quot;Pricing details could not be found for the given product id&quot;);</span>
-<span class="fc" id="L106">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.NOT_FOUND);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">		else if (StringUtils.isEmpty(productDTO.getProductId())) {</span>
+<span class="fc" id="L110">			log.info(&quot;Product id is null&quot;);</span>
+<span class="fc" id="L111">			message.setError(&quot;Bad Request&quot;);</span>
+<span class="fc" id="L112">			message.setMessage(&quot;Product id cannot be null/empty&quot;);</span>
+<span class="fc" id="L113">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.NOT_FOUND);</span>
 		}
 
-<span class="fc" id="L109">		return new ResponseEntity&lt;ProductDTO&gt;(result, HttpStatus.OK);</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">		else if (StringUtils.isEmpty(productDTO.getPricingDTO().getCurrencyCode())) {</span>
+<span class="fc" id="L117">			log.info(&quot;Currency code is null&quot;);</span>
+<span class="fc" id="L118">			message.setError(&quot;Bad Request&quot;);</span>
+<span class="fc" id="L119">			message.setMessage(&quot;Currency code cannot be empty&quot;);</span>
+<span class="fc" id="L120">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.NOT_FOUND);</span>
+		}
+
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">		else if (!StringUtils.isEmpty(productDTO.getPricingDTO().getCurrencyCode())</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">				&amp;&amp; productDTO.getPricingDTO().getCurrencyCode().length() != 3) {</span>
+<span class="fc" id="L125">			log.info(&quot;Currency code length is greater than 3 &quot; + productDTO.getPricingDTO().getCurrencyCode());</span>
+<span class="fc" id="L126">			message.setError(&quot;Bad Request&quot;);</span>
+<span class="fc" id="L127">			message.setMessage(&quot;Currency code should be in 3 digits&quot;);</span>
+<span class="fc" id="L128">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.NOT_FOUND);</span>
+		}
+
+<span class="fc bfc" id="L131" title="All 2 branches covered.">		else if (productDTO.getPricingDTO().getCurrentPrice() &lt;= 0) {</span>
+<span class="fc" id="L132">			log.info(&quot;Price cannot be equal/less than zero &quot; + productDTO.getPricingDTO().getCurrentPrice());</span>
+<span class="fc" id="L133">			message.setError(&quot;Bad Request&quot;);</span>
+<span class="fc" id="L134">			message.setMessage(&quot;Price cannot be equal/less than zero&quot;);</span>
+<span class="fc" id="L135">			return new ResponseEntity&lt;Message&gt;(message, HttpStatus.NOT_FOUND);</span>
+		}
+
+<span class="fc" id="L138">		ProductDTO result = (ProductDTO) productService.updatePricingDetails(productDTO, productId);</span>
+
+<span class="fc bfc" id="L140" title="All 2 branches covered.">		if (null == result.getPricingDTO()) {</span>
+<span class="fc" id="L141">			log.info(&quot;Pricing details could not be found for the product id &quot; + productId);</span>
+<span class="fc" id="L142">			ProductDTO prodDTO = new ProductDTO(result.getProductName(), result.getProductId(),</span>
+<span class="fc" id="L143">					new PricingDTO(result.getProductId(), 0, &quot;&quot;));</span>
+<span class="fc" id="L144">			return new ResponseEntity&lt;ProductDTO&gt;(prodDTO, HttpStatus.NOT_FOUND);</span>
+		}
+
+<span class="fc" id="L147">		return new ResponseEntity&lt;ProductDTO&gt;(result, HttpStatus.OK);</span>
 
 	}
 

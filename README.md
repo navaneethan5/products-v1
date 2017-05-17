@@ -93,6 +93,34 @@ Content-Type: application/json
 }
 ```
 
+### Docker version
+
+1.Run docker image for mongodb
+```
+docker run -P -d --name mongodb mongo
+```
+
+2.Setup data
+```
+docker exec -i mongodb sh
+mongo
+db.PRICING.insert({ productId: '13860428', currentPrice : 19.99, currencyCode :'USD' })
+db.PRICING.insert({ productId: '16696652', currentPrice : 33.75, currencyCode :'USD' })
+```
+3.Build docker image
+```
+docker build -t products-v1 .
+```
+4.Link and execute API container
+```
+docker run -P -d --name products --link mongodb products-v1
+```
+
+### Health Check
+```
+http://localhost:8080/health
+```
+
 ### Reports
 
 #### Unit test results

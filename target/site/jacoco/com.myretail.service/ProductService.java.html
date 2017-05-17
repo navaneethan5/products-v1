@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProductService.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">products-v1</a> &gt; <a href="index.source.html" class="el_package">com.myretail.service</a> &gt; <span class="el_source">ProductService.java</span></div><h1>ProductService.java</h1><pre class="source lang-java linenums">package com.myretail.service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,43 +23,43 @@ public class ProductService {
 
 	ProductRepository productPricingRepository;
 
-<span class="fc" id="L31">	private static final Logger log = LoggerFactory.getLogger(ProductController.class);</span>
+<span class="fc" id="L26">	private static final Logger log = LoggerFactory.getLogger(ProductController.class);</span>
 
 	@Autowired
-<span class="fc" id="L34">	public ProductService(ProductRepository productPricingRepository) {</span>
-<span class="fc" id="L35">		this.productPricingRepository = productPricingRepository;</span>
-<span class="fc" id="L36">	}</span>
+<span class="fc" id="L29">	public ProductService(ProductRepository productPricingRepository) {</span>
+<span class="fc" id="L30">		this.productPricingRepository = productPricingRepository;</span>
+<span class="fc" id="L31">	}</span>
 
 	/**
 	 * Update pricing information for specific product id in database
-	 * 
+	 *
 	 * @param productDTO
 	 * @param productId
 	 * @return
 	 */
 	public Object updatePricingDetails(ProductDTO productDTO, String productId) {
 
-<span class="fc" id="L47">		log.info(&quot;Calling Service method updatePricingDetails&quot;);</span>
+<span class="fc" id="L42">		log.info(&quot;Calling Service method updatePricingDetails&quot;);</span>
 
-<span class="fc" id="L49">		PricingDTO pricingDTO = productPricingRepository.findByProductId(productId);</span>
+<span class="fc" id="L44">		PricingDTO pricingDTO = productPricingRepository.findByProductId(productId);</span>
 
-<span class="pc bpc" id="L51" title="1 of 2 branches missed.">		if (null != pricingDTO.getProductId()) {</span>
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">		if (null != pricingDTO &amp;&amp; null != pricingDTO.getProductId()) {</span>
 
-<span class="fc" id="L53">			pricingDTO.setCurrentPrice(productDTO.getPricingDTO().getCurrentPrice());</span>
-<span class="fc" id="L54">			pricingDTO.setCurrencyCode(productDTO.getPricingDTO().getCurrencyCode());</span>
+<span class="fc" id="L48">			pricingDTO.setCurrentPrice(productDTO.getPricingDTO().getCurrentPrice());</span>
+<span class="fc" id="L49">			pricingDTO.setCurrencyCode(productDTO.getPricingDTO().getCurrencyCode());</span>
 
-<span class="fc" id="L56">			productPricingRepository.save(pricingDTO);</span>
+<span class="fc" id="L51">			productPricingRepository.save(pricingDTO);</span>
 		}
 
-<span class="fc" id="L59">		productDTO.setPricingDTO(pricingDTO);</span>
+<span class="fc" id="L54">		productDTO.setPricingDTO(pricingDTO);</span>
 
-<span class="fc" id="L61">		return productDTO;</span>
+<span class="fc" id="L56">		return productDTO;</span>
 	}
 
 	/**
 	 * Get product name from external API and retrieve pricing information from
 	 * database for the give product id
-	 * 
+	 *
 	 * @param productId
 	 * @return
 	 * @throws IOException
@@ -72,21 +67,21 @@ public class ProductService {
 	 */
 	public Object getProductDetails(String productId) throws JsonProcessingException, IOException {
 
-<span class="fc" id="L75">		log.info(&quot;Calling Service method getProductDetails&quot;);</span>
-<span class="fc" id="L76">		Object productDetails = getProductName(productId);</span>
+<span class="fc" id="L70">		log.info(&quot;Calling Service method getProductDetails&quot;);</span>
+<span class="fc" id="L71">		Object productDetails = getProductName(productId);</span>
 
-<span class="pc bpc" id="L78" title="2 of 4 branches missed.">		if (productDetails instanceof ProductDTO &amp;&amp; (null != ((ProductDTO) productDetails).getProductName())) {</span>
-<span class="nc" id="L79">			PricingDTO productPricing = productPricingRepository.findByProductId(productId);</span>
-<span class="nc" id="L80">			((ProductDTO) productDetails).setPricingDTO(productPricing);</span>
+<span class="pc bpc" id="L73" title="2 of 4 branches missed.">		if (productDetails instanceof ProductDTO &amp;&amp; (null != ((ProductDTO) productDetails).getProductName())) {</span>
+<span class="fc" id="L74">			PricingDTO productPricing = productPricingRepository.findByProductId(productId);</span>
+<span class="fc" id="L75">			((ProductDTO) productDetails).setPricingDTO(productPricing);</span>
 		}
 
-<span class="fc" id="L83">		return productDetails;</span>
+<span class="fc" id="L78">		return productDetails;</span>
 
 	}
 
 	/**
 	 * Call external API to retrieve product name for the given productId
-	 * 
+	 *
 	 * @param productId
 	 * @return
 	 * @throws IOException
@@ -94,55 +89,57 @@ public class ProductService {
 	 */
 	public Object getProductName(String productId) throws JsonProcessingException, IOException {
 
-<span class="fc" id="L97">		log.info(&quot;Calling Service method getProductName&quot;);</span>
+<span class="fc" id="L92">		log.info(&quot;Calling Service method getProductName&quot;);</span>
 
-<span class="fc" id="L99">		ProductDTO productDetails = new ProductDTO();</span>
-<span class="fc" id="L100">		HttpURLConnection conn = null;</span>
+<span class="fc" id="L94">		ProductDTO productDetails = new ProductDTO();</span>
+<span class="fc" id="L95">		HttpURLConnection conn = null;</span>
 
 		try {
 
-<span class="fc" id="L104">			URL url = new URL(constructURL(productId));</span>
-<span class="fc" id="L105">			conn = (HttpURLConnection)url.openConnection();</span>
-<span class="fc" id="L106">			conn.setRequestMethod(&quot;GET&quot;);</span>
-<span class="fc" id="L107">			conn.setRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);</span>
+<span class="fc" id="L99">			URL url = new URL(constructURL(productId));</span>
+<span class="fc" id="L100">			conn = (HttpURLConnection) url.openConnection();</span>
+<span class="fc" id="L101">			conn.setRequestMethod(&quot;GET&quot;);</span>
+<span class="fc" id="L102">			conn.setRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);</span>
 
 			// RestTemplate restTemplate = new RestTemplate();
 			// response = restTemplate.getForEntity(constructURL(productId),
 			// String.class);
 
-<span class="pc bpc" id="L113" title="1 of 2 branches missed.">			if (conn.getResponseCode() == 200) {</span>
-<span class="nc" id="L114">				ObjectMapper mapper = new ObjectMapper();</span>
-<span class="nc" id="L115">				JsonNode root = mapper.readTree(conn.getInputStream());</span>
-<span class="nc" id="L116">				JsonNode tcin = root.path(&quot;product&quot;).path(&quot;item&quot;).path(&quot;tcin&quot;);</span>
-<span class="nc" id="L117">				JsonNode title = root.path(&quot;product&quot;).path(&quot;item&quot;).path(&quot;product_description&quot;).path(&quot;title&quot;);</span>
-<span class="nc" id="L118">				productDetails.setProductId(tcin.asText());</span>
-<span class="nc" id="L119">				productDetails.setProductName(title.asText());</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">			if (conn.getResponseCode() == 200) {</span>
+<span class="fc" id="L109">				ObjectMapper mapper = new ObjectMapper();</span>
+<span class="fc" id="L110">				JsonNode root = mapper.readTree(conn.getInputStream());</span>
+<span class="fc" id="L111">				JsonNode tcin = root.path(&quot;product&quot;).path(&quot;available_to_promise_network&quot;).path(&quot;product_id&quot;);</span>
+<span class="fc" id="L112">				JsonNode title = root.path(&quot;product&quot;).path(&quot;item&quot;).path(&quot;product_description&quot;).path(&quot;title&quot;);</span>
+<span class="fc" id="L113">				productDetails.setProductId(tcin.asText());</span>
+<span class="fc" id="L114">				productDetails.setProductName(title.asText());</span>
+<span class="pc bnc" id="L115" title="All 4 branches missed.">			} else if (conn.getResponseCode() == 500 || conn.getResponseCode() == 503) {</span>
+<span class="nc" id="L116">				productDetails = null;</span>
 			}
-
-<span class="fc" id="L122">			return productDetails;</span>
-<span class="nc" id="L123">		} catch (JsonProcessingException e) {</span>
-<span class="nc" id="L124">			log.error(&quot;JsonProcessingException occured when processing the response &quot; + e.getMessage());</span>
-<span class="nc" id="L125">			return productDetails;</span>
+<span class="fc" id="L118">			return productDetails;</span>
+<span class="nc" id="L119">		} catch (JsonProcessingException e) {</span>
+<span class="nc" id="L120">			log.error(&quot;JsonProcessingException occured when processing the response &quot; + e.getMessage());</span>
+<span class="nc" id="L121">			productDetails = null;</span>
+<span class="nc" id="L122">			return productDetails;</span>
 		}
 
-<span class="nc" id="L128">		catch (IOException e) {</span>
-<span class="nc" id="L129">			log.error(&quot;IOException occured when invoking the api &quot; + e.getMessage());</span>
-<span class="nc" id="L130">			return productDetails;</span>
-		}
-		finally{
-<span class="pc" id="L133">			conn.disconnect();</span>
+<span class="nc" id="L125">		catch (IOException e) {</span>
+<span class="nc" id="L126">			log.error(&quot;IOException occured when invoking the api &quot; + e.getMessage());</span>
+<span class="nc" id="L127">			productDetails = null;</span>
+<span class="nc" id="L128">			return productDetails;</span>
+		} finally {
+<span class="pc" id="L130">			conn.disconnect();</span>
 		}
 
 	}
 
 	/**
 	 * Return target URL
-	 * 
+	 *
 	 * @param productId
 	 * @return
 	 */
 	public String constructURL(String productId) {
-<span class="fc" id="L145">		return ProductConstants.REDSKY_ENDPOINT + &quot;/&quot; + productId;</span>
+<span class="fc" id="L142">		return ProductConstants.REDSKY_ENDPOINT + &quot;/&quot; + productId;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

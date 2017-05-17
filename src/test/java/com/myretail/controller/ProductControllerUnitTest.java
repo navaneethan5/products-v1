@@ -127,11 +127,11 @@ public class ProductControllerUnitTest {
 
 	@Test
 	public void testUpdatePricingDetailsNotFound() throws Exception {
-		ProductDTO productDTO = new ProductDTO("Sample Test Name", "12345", null);
+		ProductDTO productDTO = new ProductDTO("Sample Test Name", "12345", new PricingDTO("12345", 100, "USD"));
 		Mockito.when((ProductDTO) productService.updatePricingDetails(productDTO, "12345")).thenReturn(productDTO);
 		ResponseEntity<?> response = productController.updatePricingDetails("12345", productDTO,
 				ProductConstants.CONSUMER_KEY);
-		assertEquals(404, response.getStatusCodeValue());
+		assertEquals(200, response.getStatusCodeValue());
 	}
 
 	@Test
@@ -142,12 +142,70 @@ public class ProductControllerUnitTest {
 	}
 
 	@Test
+	public void testGetProductPricingDetailsNull() throws Exception {
+		Mockito.when((ProductDTO) productService.getProductDetails("1234")).thenReturn(null);
+		ResponseEntity<?> response = productController.getProductPricingDetails("", ProductConstants.CONSUMER_KEY);
+		assertEquals(404, response.getStatusCodeValue());
+	}
+
+	@Test
+	public void testGetProductPricingDetailsNullCurrencyCode() throws Exception {
+		ProductDTO productDTO = new ProductDTO("Sample Test Name", "12345", new PricingDTO("12345", 100, null));
+
+		ResponseEntity<?> response = productController.updatePricingDetails("12345", productDTO,
+				ProductConstants.CONSUMER_KEY);
+		assertEquals(404, response.getStatusCodeValue());
+	}
+
+	@Test
+	public void testGetProductPricingDetailsLessThanZero() throws Exception {
+		ProductDTO productDTO = new ProductDTO("Sample Test Name", "12345", new PricingDTO("12345", 0, null));
+
+		ResponseEntity<?> response = productController.updatePricingDetails("12345", productDTO,
+				ProductConstants.CONSUMER_KEY);
+		assertEquals(404, response.getStatusCodeValue());
+	}
+
+	@Test
+	public void testUpdatePricingDetailsNullProductId() throws Exception {
+		productDTO.setProductId(null);
+		ResponseEntity<?> response = productController.updatePricingDetails("12345", productDTO,
+				ProductConstants.CONSUMER_KEY);
+		assertEquals(404, response.getStatusCodeValue());
+	}
+
+	@Test
+	public void testUpdatePricingDetailsCurrencyPrice0() throws Exception {
+		productDTO.getPricingDTO().setCurrentPrice(0);
+		ResponseEntity<?> response = productController.updatePricingDetails("12345", productDTO,
+				ProductConstants.CONSUMER_KEY);
+		assertEquals(404, response.getStatusCodeValue());
+	}
+
+	@Test
+	public void testUpdatePricingDetailsCurrencyCode() throws Exception {
+		productDTO.getPricingDTO().setCurrencyCode("AB");
+		ResponseEntity<?> response = productController.updatePricingDetails("12345", productDTO,
+				ProductConstants.CONSUMER_KEY);
+		assertEquals(404, response.getStatusCodeValue());
+	}
+
+	@Test
 	public void testUpdatePricingDetailsInvalidKey() throws Exception {
 		String jsonPath = json(
 				new ProductDTO("The Big Lebowski (Blu-ray)", "13860428", new PricingDTO("138604", 100.0, "USD")));
 		this.mockMvc
 				.perform(put("/products/v1/138604?key=123").contentType(MediaType.APPLICATION_JSON).content(jsonPath))
 				.andExpect(status().isUnauthorized());
+	}
+	
+	@Test
+	public void testUpdateProductPricingDetails() throws Exception {
+		ProductDTO prodDTO = new ProductDTO("sample", "12345", null);
+		Mockito.when((ProductDTO) productService.updatePricingDetails(productDTO, "12345")).thenReturn(prodDTO);
+		ResponseEntity<?> response = productController.updatePricingDetails("12345", productDTO,
+				ProductConstants.CONSUMER_KEY);
+		assertEquals(404, response.getStatusCodeValue());
 	}
 
 	protected String json(Object o) throws IOException {

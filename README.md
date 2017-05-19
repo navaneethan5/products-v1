@@ -103,6 +103,11 @@ docker run -P -d --name mongodb mongo
 2.Setup data
 ```
 docker exec -it mongodb sh
+```
+
+Enter the below commands inside the container shell
+
+```
 mongo
 db.createCollection("PRICING")
 db.PRICING.insert({ productId: '13860428', currentPrice : 19.99, currencyCode :'USD' })

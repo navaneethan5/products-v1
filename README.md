@@ -105,7 +105,7 @@ docker run -P -d --name mongodb mongo
 docker exec -it mongodb sh
 ```
 
-Enter the below commands inside the container shell
+Enter the below commands inside the mongo db container shell
 
 ```
 mongo

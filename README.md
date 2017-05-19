@@ -36,7 +36,7 @@ mongo
 ```
 4.Insert data for datasetup
 ```
-db.createCollection("PRICING)
+db.createCollection("PRICING")
 db.PRICING.insert({ productId: '13860428', currentPrice : 19.99, currencyCode :'USD' })
 db.PRICING.insert({ productId: '16696652', currentPrice : 33.75, currencyCode :'USD' })
 
@@ -102,8 +102,9 @@ docker run -P -d --name mongodb mongo
 
 2.Setup data
 ```
-docker exec -i mongodb sh
+docker exec -it mongodb sh
 mongo
+db.createCollection("PRICING")
 db.PRICING.insert({ productId: '13860428', currentPrice : 19.99, currencyCode :'USD' })
 db.PRICING.insert({ productId: '16696652', currentPrice : 33.75, currencyCode :'USD' })
 ```
@@ -127,7 +128,7 @@ http://localhost:8080/health
 
 The unit test results can be found in the path
 ```
-/products-v1/target/site/pmd.html
+/products-v1/target/site/index.html
 ```
 #### Static analysis report
 
